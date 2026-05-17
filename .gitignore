@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# claude-ntfy local credentials (use config.env.example as template)
+scripts/claude-hooks/config.env
+
 # vercel
 .vercel
 
