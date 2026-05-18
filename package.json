@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "hooks:install": "bash scripts/claude-hooks/install.sh",
+    "hooks:subscribe": "bash scripts/claude-hooks/subscribe.sh"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",

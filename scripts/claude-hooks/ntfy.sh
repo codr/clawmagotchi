@@ -21,9 +21,9 @@ fi
 
 INPUT="$(cat)"
 
-EVENT="$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('hook_event_name',''))")"
-CWD="$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('cwd',''))")"
-MSG="$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('message',''))")"
+EVENT="$(echo "$INPUT" | jq -r '.hook_event_name // ""')"
+CWD="$(echo "$INPUT" | jq -r '.cwd // ""')"
+MSG="$(echo "$INPUT" | jq -r '.message // ""')"
 
 PROJECT="$(basename "$CWD")"
 
@@ -54,7 +54,7 @@ curl -s --max-time 5 \
   -H "Title: $TITLE" \
   -H "Priority: $PRIORITY" \
   -H "Tags: robot" \
-  "${AUTH_HEADER[@]}" \
+  ${AUTH_HEADER[@]+"${AUTH_HEADER[@]}"} \
   -d "$BODY" \
   "$NTFY_URL/$NTFY_TOPIC" \
   > /dev/null || true
