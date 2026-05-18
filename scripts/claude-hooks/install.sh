@@ -63,13 +63,14 @@ source "$CONFIG_PATH"
 # Merge hooks into ~/.claude/settings.json
 [[ -f "$SETTINGS_PATH" ]] || echo '{}' > "$SETTINGS_PATH"
 
-jq --arg cmd "$INSTALL_PATH" '
-  .hooks.Stop //= [] |
-  if (.hooks.Stop | map(.hooks[]?.command) | index($cmd)) then .
-  else .hooks.Stop += [{"hooks":[{"type":"command","command":$cmd,"async":true,"timeout":10}]}] end |
-  .hooks.Notification //= [] |
-  if (.hooks.Notification | map(.hooks[]?.command) | index($cmd)) then .
-  else .hooks.Notification += [{"hooks":[{"type":"command","command":$cmd,"async":true,"timeout":10}]}] end
+HOOK='{"hooks":[{"type":"command","command":"","async":true,"timeout":10}]}'
+
+jq --arg cmd "$INSTALL_PATH" --argjson hook "$HOOK" '
+  def add_hook(event):
+    .hooks[event] //= [] |
+    if (.hooks[event] | map(.hooks[]?.command) | index($cmd)) then .
+    else .hooks[event] += [($hook | .hooks[0].command = $cmd)] end;
+  add_hook("Stop") | add_hook("Notification") | add_hook("PermissionRequest") | add_hook("SessionStart") | add_hook("SessionEnd")
 ' "$SETTINGS_PATH" > /tmp/_claude_settings.json && mv /tmp/_claude_settings.json "$SETTINGS_PATH"
 
 echo "✓ Hooks merged into $SETTINGS_PATH"

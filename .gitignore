@@ -36,6 +36,9 @@ yarn-error.log*
 # claude-ntfy local credentials (use config.env.example as template)
 scripts/claude-hooks/config.env
 
+# local Claude Code overrides
+.claude/settings.local.json
+
 # vercel
 .vercel
 

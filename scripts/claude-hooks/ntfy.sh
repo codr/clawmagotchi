@@ -24,6 +24,7 @@ INPUT="$(cat)"
 EVENT="$(echo "$INPUT" | jq -r '.hook_event_name // ""')"
 CWD="$(echo "$INPUT" | jq -r '.cwd // ""')"
 MSG="$(echo "$INPUT" | jq -r '.message // ""')"
+TOOL="$(echo "$INPUT" | jq -r '.tool_name // ""')"
 
 PROJECT="$(basename "$CWD")"
 
@@ -37,6 +38,21 @@ case "$EVENT" in
     TITLE="Claude Needs Attention"
     BODY="${MSG:-Waiting for input}"
     PRIORITY="high"
+    ;;
+  PermissionRequest)
+    TITLE="Claude Needs Permission"
+    BODY="${TOOL} in $PROJECT"
+    PRIORITY="high"
+    ;;
+  SessionStart)
+    TITLE="Claude Session Started"
+    BODY="$PROJECT"
+    PRIORITY="min"
+    ;;
+  SessionEnd)
+    TITLE="Claude Session Ended"
+    BODY="$PROJECT"
+    PRIORITY="min"
     ;;
   *)
     TITLE="Claude: $EVENT"
